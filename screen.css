@@ -1,0 +1,22 @@
+#editor-bottom-bar a {
+  float: left;
+}
+
+.options-menu .OutlineClass a::before, .options-menu .OutlineFunction a::before {
+  padding-left: 14px;
+  background: url('icons.png') no-repeat;
+  width: 8px;
+  height: 8px;
+  content: ' ';
+}
+
+.options-menu .OutlineClass a::before { background-position-y: -16px; }
+
+#OutlineMenu li {
+  border:none;
+  margin-right: 10px;
+}
+
+#OutlineMenu li a {
+  padding: 5px;
+}
