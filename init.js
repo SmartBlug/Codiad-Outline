@@ -37,12 +37,19 @@
       this.jQuery('#editor-bottom-bar').append(OutlineButton);
       this.$OutlineButton = this.jQuery('#OutlineButton');
       this.$OutlineMenu = this.jQuery(OutlineMenu);
-      //this.$OutlineMenu = this.jQuery('.FullOverlay');
+      
       this.codiad.editor.initMenuHandler(this.$OutlineButton, this.$OutlineMenu);
+
+      this.$Outline = this.jQuery('<ul class="outline">outline</ul>');
+      $('.sb-right-content hr:first').before('<hr>');
+      $('.sb-right-content hr:first').after(this.$Outline);
+
       this.$OutlineButton.click(function(e){
         Menu = _this.jQuery('#OutlineMenu');
         Menu.css({overflow:'auto','max-height':$('#root-editor-wrapper').height()});
       });
+      
+      
       this.$OutlineMenu.on('click', 'li a', function(element) {
         var line;
         line = _this.jQuery(element.currentTarget).data('line');
@@ -51,6 +58,16 @@
           return _this.codiad.active.focus();
         }
       });
+ 
+      this.$Outline.on('click', 'li a', function(element) {
+        var line;
+        line = _this.jQuery(element.currentTarget).data('line');
+        if (line) {
+          _this.codiad.active.gotoLine(line);
+          return _this.codiad.active.focus();
+        }
+      });
+ 
       this.amplify.subscribe('active.onFocus', function() {
         return _this.updateOutline();
       });
@@ -97,10 +114,12 @@
 
       }
       if (matches.length > 0) {
+        this.$Outline.empty().append($(matches.join("")));
+      }
+      if (matches.length > 0) {
         this.$OutlineMenu.empty().append($(matches.join("")));
         editor = this.codiad.editor.getActive().getSession();
         editor.setAnnotations(editorOutline.concat(editor.getAnnotations()));
-        //return this.$OutlineButton.find('span').removeClass('icon-check').addClass('icon-clipboard');
         return this.$OutlineButton;
       } else {
         return this.disableOutline();
@@ -109,7 +128,6 @@
 
     Outline.prototype.disableOutline = function() {
       this.$OutlineMenu.empty().append("<li><a>Nothing</a></li>");
-      //return this.$OutlineButton.find('span').removeClass('icon-clipboard').addClass('icon-check');
       return this.$OutlineButton;
     };
 
