@@ -92,30 +92,32 @@
       editorOutline = [];
       for (index = _i = 0, _len = loc.length; _i < _len; index = ++_i) {
         line = loc[index];
-        if (line.indexOf("function") > -1 && line.match(/function\s(\w+\(.*\))/)) {
-          matches.push('<li class="OutlineFunction"><a data-line="' + (index + 1) + '">' + line.match(/function\s(\w+\(.*\))/)[1] + '</a></li>');
-          editorOutline.push({
+        //if (line.indexOf("function") > -1 && line.match(/function\s(\w+\(.*\))/)) {
+        if (line.indexOf("function") > -1 && line.match(/function\s(\w+[\s-(].*\))/)) {
+          //matches.push('<li class="OutlineFunction"><a data-line="' + (index + 1) + '" title="' + line.match(/function\s(\w+\(.*\))/)[1] + '">' + line.match(/function\s(\w+\(.*\))/)[1] + '</a></li>');
+          matches.push('<li class="OutlineFunction"><a data-line="' + (index + 1) + '" title="' + line.match(/function\s(\w+[\s-(].*\))/)[1] + '">' + line.match(/function\s(\w+[\s-(].*\))/)[1] + '</a></li>');
+          /*editorOutline.push({
             row: index,
             column: 1,
             text: line.match(/function\s(\w+\(.*\))/)[1],
             type: "info"
-          });
+          }); */
         }
         
         if (line.indexOf("class") > -1 && line.match(/class\s(\w+)/)) {
           matches.push('<li class="OutlineClass"><a data-line="' + (index + 1) + '">' + line.match(/class\s(\w+)/)[1] + '</a></li>');
-          editorOutline.push({
+          /*editorOutline.push({
             row: index,
             column: 1,
             text: line.match(/class\s(\w+)/)[1],
             type: "info"
-          });
+          });*/
         }
 
       }
-      if (matches.length > 0) {
-        this.$Outline.empty().append($(matches.join("")));
-      }
+      if (matches.length > 0) this.$Outline.empty().append($(matches.join("")));
+                         else this.$Outline.empty();
+
       if (matches.length > 0) {
         this.$OutlineMenu.empty().append($(matches.join("")));
         editor = this.codiad.editor.getActive().getSession();
