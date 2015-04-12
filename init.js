@@ -90,26 +90,39 @@
       loc = content.split(/\r?\n/);
       matches = [];
       editorOutline = [];
+      var keywords = ['public','private','protected'];
+      var regexFunction = /^(\s+|())+(public|private|protected|())(\s+|())+function\s+(\w+[\s-(].*\))/
+      var regexClass = /^(\s+|())+class\s(\w+)/ 
+      
       for (index = _i = 0, _len = loc.length; _i < _len; index = ++_i) {
         line = loc[index];
-        //if (line.indexOf("function") > -1 && line.match(/function\s(\w+\(.*\))/)) {
-        if (line.indexOf("function") > -1 && line.match(/function\s(\w+[\s-(].*\))/)) {
-          //matches.push('<li class="OutlineFunction"><a data-line="' + (index + 1) + '" title="' + line.match(/function\s(\w+\(.*\))/)[1] + '">' + line.match(/function\s(\w+\(.*\))/)[1] + '</a></li>');
-          matches.push('<li class="OutlineFunction"><a data-line="' + (index + 1) + '" title="' + line.match(/function\s(\w+[\s-(].*\))/)[1] + '">' + line.match(/function\s(\w+[\s-(].*\))/)[1] + '</a></li>');
+        if (line.indexOf("function") > -1 && line.match(regexFunction)) {
+          var KeyArray = line.match(regexFunction);
+          KeyArray.shift();
+          var KeyFunction = KeyArray.pop();
+          var FunctionType = '';
+          KeyArray.forEach(function(entry) {
+              if ($.inArray(entry,keywords)>=0) {
+                FunctionType = ' '+entry;
+              }
+          });
+          matches.push('<li class="OutlineFunction' + FunctionType + '"><a data-line="' + (index + 1) + '" title="' + KeyFunction + '">' + KeyFunction + '</a></li>');
           /*editorOutline.push({
             row: index,
             column: 1,
-            text: line.match(/function\s(\w+\(.*\))/)[1],
+            text: KeyFunction,
             type: "info"
           }); */
         }
-        
-        if (line.indexOf("class") > -1 && line.match(/class\s(\w+)/)) {
-          matches.push('<li class="OutlineClass"><a data-line="' + (index + 1) + '">' + line.match(/class\s(\w+)/)[1] + '</a></li>');
+       
+        if (line.indexOf("class") > -1 && line.match(regexClass)) {
+          var KeyArray = line.match(regexClass);
+          var KeyFunction = KeyArray.pop();
+          matches.push('<li class="OutlineFunction class"><a data-line="' + (index + 1) + '" title="' + KeyFunction + '">' + KeyFunction + '</a></li>');
           /*editorOutline.push({
             row: index,
             column: 1,
-            text: line.match(/class\s(\w+)/)[1],
+            text: KeyFunction,
             type: "info"
           });*/
         }

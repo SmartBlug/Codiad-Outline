@@ -2,11 +2,11 @@
   float: left;
 }
 
-.OutlineClass a, .OutlineFunction a {
+.OutlineFunction a {
   color: darkgray;
 }
 
-.OutlineClass a::before, .OutlineFunction a::before, .OutlineClass a::before, .OutlineFunction a::before {
+.OutlineFunction a::before, .OutlineFunction a::before {
   padding-left: 14px;
   background: url('icons.png') no-repeat;
   width: 8px;
@@ -14,17 +14,17 @@
   content: ' ';
 }
 
-.OutlineClass a::before { background-position-y: -16px; }
-
 #OutlineMenu li {
   border:none;
   margin-right: 10px;
   white-space: nowrap;
 }
 
-.OutlineFunction {
-  white-space: nowrap;
-}
+.OutlineFunction { white-space: nowrap; }
+
+.OutlineFunction.private a::before { background-position-y: -16px; }
+.OutlineFunction.protected a::before { background-position-y: -32px; }
+.OutlineFunction.class a::before { background-position-y: -48px; }
 
 #OutlineMenu li a {
   padding: 5px;
