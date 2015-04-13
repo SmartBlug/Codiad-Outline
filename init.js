@@ -40,15 +40,13 @@
       
       this.codiad.editor.initMenuHandler(this.$OutlineButton, this.$OutlineMenu);
 
-      this.$Outline = this.jQuery('<ul class="outline">outline</ul>');
-      $('.sb-right-content hr:first').before('<hr>');
+      this.$Outline = this.jQuery('<ul class="Outline"></ul>');
       $('.sb-right-content hr:first').after(this.$Outline);
 
       this.$OutlineButton.click(function(e){
         Menu = _this.jQuery('#OutlineMenu');
         Menu.css({overflow:'auto','max-height':$('#root-editor-wrapper').height()});
       });
-      
       
       this.$OutlineMenu.on('click', 'li a', function(element) {
         var line;
@@ -70,6 +68,9 @@
  
       this.amplify.subscribe('active.onFocus', function() {
         return _this.updateOutline();
+      });
+      this.amplify.subscribe('active.onClose', function() {
+        return _this.$Outline.empty();
       });
       this.updateInterval = null;
       this.amplify.subscribe('active.onOpen', function() {
