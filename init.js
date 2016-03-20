@@ -69,63 +69,70 @@
       this.amplify.subscribe('active.onFocus', function() {
         return _this.updateOutline();
       });
+      this.amplify.subscribe('active.onSave', function() {
+        return _this.updateOutline();
+      });
       this.amplify.subscribe('active.onClose', function() {
         return _this.$Outline.empty();
       });
       this.updateInterval = null;
       this.amplify.subscribe('active.onOpen', function() {
-        _this.updateOutline();
-        return _this.codiad.editor.getActive().getSession().on('change', function(e) {
+        //_this.updateOutline();
+        /*return _this.codiad.editor.getActive().getSession().on('change', function(e) {
           clearTimeout(_this.updateInterval);
           return _this.updateInterval = setTimeout(_this.updateOutline, 1000);
-        });
+        });  */
       });
       return this.amplify.subscribe('active.onClose', function() {
         return _this.disableOutline();
       });
     };
-
+    
     Outline.prototype.updateOutline = function() {
-      var content, editor, editorOutline, index, line, loc, matches, _i, _len;
+      var content, editor, editorOutline, index, line, loc, matches;
       content = this.codiad.editor.getContent();
       loc = content.split(/\r?\n/);
       matches = [];
       editorOutline = [];
       var keywords = ['public','private','protected'];
-      var regexFunction = /^(\s+|())+(public|private|protected|())(\s+|())+function\s+(\w+[\s-(].*\))/
       var regexClass = /^(\s+|())+class\s(\w+)/ 
       
-      for (index = _i = 0, _len = loc.length; _i < _len; index = ++_i) {
+      for (index = 0; index < loc.length; index++) {
         line = loc[index];
-        if (line.indexOf("function") > -1 && line.match(regexFunction)) {
-          var KeyArray = line.match(regexFunction);
-          KeyArray.shift();
-          var KeyFunction = KeyArray.pop();
-          var FunctionType = '';
-          KeyArray.forEach(function(entry) {
-              if ($.inArray(entry,keywords)>=0) {
-                FunctionType = ' '+entry;
+        if (line.indexOf("function") > -1) {
+          var split = line.replace("\t",' ').split(' ').filter(item => item !== "");
+          var FunctionType = 'public';
+          var Function = null;
+          for (var keyword in split) {
+            if (Function==null) {
+              switch (split[keyword]) {
+                case 'public':
+                case 'private':
+                case 'protected':
+                  FunctionType = split[keyword];
+                  break;
+                case 'function':
+                  Function = parseInt(keyword);
+                  break;
+                default:
+                  Function = -1;
+                  break;
               }
-          });
-          matches.push('<li class="OutlineFunction' + FunctionType + '"><a data-line="' + (index + 1) + '" title="' + KeyFunction + '">' + KeyFunction + '</a></li>');
-          /*editorOutline.push({
-            row: index,
-            column: 1,
-            text: KeyFunction,
-            type: "info"
-          }); */
+            }
         }
-       
+        
+        if (Function>=0) {
+          split = split.slice(Function+1).join('');
+          if (split.indexOf(")")>-1) split = split.substring(0,split.indexOf(")")+1);
+          //console.log("Found",FunctionType,Function,split);
+          matches.push('<li class="OutlineFunction ' + FunctionType + '"><a data-line="' + (index + 1) + '" title="' + split + '">' + split + '</a></li>'); 
+        }
+        //else console.log(FunctionType,Function,split); 
+      }       
         if (line.indexOf("class") > -1 && line.match(regexClass)) {
           var KeyArray = line.match(regexClass);
           var KeyFunction = KeyArray.pop();
           matches.push('<li class="OutlineFunction class"><a data-line="' + (index + 1) + '" title="' + KeyFunction + '">' + KeyFunction + '</a></li>');
-          /*editorOutline.push({
-            row: index,
-            column: 1,
-            text: KeyFunction,
-            type: "info"
-          });*/
         }
 
       }
